@@ -1,0 +1,39 @@
+import numpy as np
+
+## Function which produces allele frequencies across gnerations using the Wright-Fisher model
+def drift_selection_simulation(N, generations, allele_frequency, selection_coefficient, selection_start):
+    freq = [] # List to store allele frequencies
+
+    freq_A = allele_frequency # Frequency of the 'A' allele
+    freq_a = 1 - allele_frequency # Frequency of the 'a' allele
+
+    for gen in range(generations + 1):
+      # For generations at or after the selection start, the fitness of the genotypes is calculated
+        if gen >= selection_start:
+            fitness_AA = 1 - selection_coefficient
+            fitness_Aa = 1 - (selection_coefficient * selection_coefficient)
+            fitness_aa = 1 - selection_coefficient
+
+            # The fitness of the A allele, and the average fitness of the A allele are used to calculate the
+            # probability a parent with the A allele is selected
+            f_A = fitness_AA * (freq_A**2) + fitness_Aa * (freq_A * freq_a)
+            av_f = (fitness_AA * (freq_A**2)) + (2 * fitness_Aa * freq_A * freq_a) + (fitness_aa * (freq_a**2))
+            p = f_A / av_f
+
+        else:
+            # If before selection_start, probability remains the same
+            p = freq_A
+
+        # Uses binomial sampling to generate the probability of the allele freqeuncy in the next generation
+        n = np.random.binomial((2 * N), p)
+
+        # Calculates allele frequency in the next generation
+        allele_frequency = n / (2 * N)
+
+        if allele_frequency > 0:
+            freq_A = allele_frequency
+            freq_a = 1 - allele_frequency
+
+        freq.append(allele_frequency)
+
+    return freq
