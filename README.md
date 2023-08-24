@@ -4,4 +4,4 @@ Muna Omar Hersi
 
 I've divided the code into 5 sections:
 
-1. * Simulations: *  
+1. <b Simulations: b> 
