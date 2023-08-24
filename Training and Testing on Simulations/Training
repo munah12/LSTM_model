@@ -1,0 +1,36 @@
+import matplotlib.pyplot as plt
+
+# Train the model on the training datasets across 100 epochs
+num_epochs = 100
+history = model.fit(allele_freq_train, target_train, epochs=num_epochs, batch_size=16, validation_data=(allele_freq_val, target_val), callbacks=[early_stopping], shuffle=True)
+
+## Plots the MAE and MSE scores across epochs during training, for both the training and validation sets
+
+# Create a single figure with two subplots
+plt.figure(figsize=(12, 6))
+
+# Plot the training loss and validation loss in the first subplot
+plt.subplot(1, 2, 1)
+plt.plot(history.history['loss'], label='Training Loss')
+plt.plot(history.history['val_loss'], label='Validation Loss')
+plt.xlabel('Epoch')
+plt.ylabel('Loss')
+plt.title('Training and Validation Loss Over Epochs')
+plt.legend()
+plt.grid(True)
+
+# Plot the training mean squared error and validation mean squared error in the second subplot
+plt.subplot(1, 2, 2)
+plt.plot(history.history['mse'], label='Training MSE', color='green')
+plt.plot(history.history['val_mse'], label='Validation MSE', color='red')
+plt.xlabel('Epoch')
+plt.ylabel('MSE')
+plt.title('Training and Validation Mean Squared Error Over Epochs')
+plt.legend()
+plt.grid(True)
+
+# Adjust the layout to avoid overlapping of the two subplots
+plt.tight_layout()
+
+# Show the plot with both subplots
+plt.show()
