@@ -1,0 +1,42 @@
+from matplotlib.patches import Circle
+
+# List of variants of interest
+variants_of_interest = ['rs2549794', 'rs17473484']
+
+# Iterate over each group and store predictions and true values for the specified variants
+for rsid, group in grouped_data:
+    if rsid in variants_of_interest:
+        # Extract the 'London_During' value as true value
+        true_value = np.array(group['London_During'])[0]
+
+        # Extract the 'London_Pre', 'London_During', 'London_Post' values as input for prediction
+        input_data = np.array(group[['London_Pre', 'London_During', 'London_Post']]).reshape(1, 3, 1)
+
+        # Make a prediction using the model
+        prediction = model.predict(input_data)[0][0]
+
+        # Print the rs ID, true value, and predicted value 
+        print(f"Variant: {rsid}, True Value: {true_value:.6f}, Predicted Value: {prediction:.6f}")
+
+## Highlight the vairants of interest on the scatter plot showing the model's predicitons agaisnt the true values
+
+# Define the rs ID you want to highlight on the graph
+rs_id = ' '
+
+# Plot the predictions against the true values
+plt.scatter(test_true_values, test_predictions, s=7)
+# Plot a line of perfect prediction
+plt.plot([min(test_true_values), max(test_true_values)], [min(test_true_values), max(test_true_values)], 'r--')
+plt.xlabel('True Values', fontweight='bold')
+plt.ylabel('Predictions', fontweight='bold')
+plt.title('True vs. Predicted Allele Frequency for Ancient Variants', fontweight='bold')
+
+# Circle the rs ID you want to highlight on the scatter plot 
+highlighted_group = grouped_data.get_group(rs_id)
+circle = Circle((np.mean(highlighted_group['London_During']), np.mean(model.predict(np.array(highlighted_group[['London_Pre', 'London_During', 'London_Post']]).reshape(-1, 3, 1)))), radius=0.02, fill=False, color='orange', linewidth=3)
+plt.gca().add_patch(circle)
+
+# Add a legend for the highlighted rs ID
+plt.legend([circle], [rs_id], loc='upper left')
+
+plt.show()
