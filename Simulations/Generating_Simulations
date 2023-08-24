@@ -1,0 +1,36 @@
+import numpy as np
+import random
+
+# Set the parameters for the simulations
+N = 50000
+generations = 100
+allele_frequency = 0.1
+num_simulations = 5000
+selection_coefficient = 0.01
+
+# Generate selection start values
+selection_start_values = np.random.choice(np.arange(5, 91, 5), num_simulations)
+
+allele_freq_list = [] # List to store input allele frequency arrays
+target_list = [] # List to store target allele frequencies 
+
+# Iterate over each simulation 
+for selection_start in selection_start_values:
+    # Generate allele frequencies using the 'drift_selection_simulation' function
+    allele_freq = np.array(drift_selection_simulation(N, generations, allele_frequency, selection_coefficient, selection_start))
+    # Selects three allele frequencies: before selection, at selection, and after selection for the input array
+    input_array = allele_freq[selection_start - 1:selection_start + 2].reshape(3, 1)
+    
+    allele_freq_list.append(input_array)
+    target_list.append(allele_freq[selection_start])
+
+# Convert the input lists and target lists into NumPY arrays
+allele_freq_list = np.array(allele_freq_list).reshape(-1, 3)
+target_list = np.array(target_list).reshape(-1, 1)
+
+# Generate indicies for shuffling the data
+indices = np.random.permutation(len(allele_freq_list))
+
+# Use these indicies to shuffle the input and target arrays
+allele_freq_list = allele_freq_list[indices]
+target_list = target_list[indices]
