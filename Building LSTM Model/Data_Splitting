@@ -1,0 +1,15 @@
+from sklearn.model_selection import train_test_split
+
+# Ratio of split
+train_ratio = 0.7
+val_ratio = 0.2
+test_ratio = 0.1
+
+# Split the data into test and combined training/validation set
+allele_freq_train_val, allele_freq_test, target_train_val, target_test = train_test_split(
+    allele_freq_list, target_list, test_size=test_ratio, random_state=50)
+
+# Further split the combine training/validation sets into separate training and validation sets
+allele_freq_train, allele_freq_val, target_train, target_val = train_test_split(
+    allele_freq_train_val, target_train_val, test_size=val_ratio/(train_ratio+val_ratio),
+    random_state=50)
