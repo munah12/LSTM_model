@@ -1,0 +1,32 @@
+import matplotlib.pyplot as plt
+
+# Reshape allele_freq_test to match the shape of the LSTM model
+allele_freq_test = allele_freq_test.reshape((-1, 3, 1))
+
+# Make predictions on the test set
+predictions = model.predict(allele_freq_test)
+
+# Flatten predictions and target_test for plotting
+predictions = predictions.flatten()
+target_test = target_test.flatten()
+
+# Plot the predictions against the true values
+plt.scatter(target_test, predictions, s=7)
+# Add a line of perfect predicition
+plt.plot([min(target_test), max(target_test)], [min(target_test), max(target_test)], 'r--')
+plt.xlabel('True Values', fontweight='bold')
+plt.ylabel('Predictions', fontweight='bold')
+plt.title('Allele A Frequency Predictions vs. True Values at the Onset of Selection', fontweight='bold')
+plt.show()
+
+# Calculate the correlation coefficient
+correlation_coefficient = np.corrcoef(target_test, predictions)[0, 1]
+
+# Calculate the R-squared value
+residuals = target_test - predictions
+ss_residuals = np.sum(residuals**2)
+ss_total = np.sum((target_test - np.mean(target_test))**2)
+r_squared = 1 - (ss_residuals / ss_total)
+
+print('Correlation Coefficient : ' , correlation_coefficient)
+print('R-Squared Value : ' , r_squared)
