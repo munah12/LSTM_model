@@ -1,0 +1,47 @@
+# Group the data by 'Site' (rsID)
+grouped_data = df_plague_data.groupby('Site')
+
+# Create an empty list to store the predictions and true values
+test_predictions = []
+test_true_values = []
+
+# Iterate over each group and make predictions
+for rsid, group in grouped_data:
+    # Extract the 'London_Pre', 'London_During', 'London_Post' values as input for prediction
+    input_data = np.array(group[['London_Pre', 'London_During', 'London_Post']]).reshape(-1, 3, 1)
+
+    # Make predictions using the model
+    group_predictions = model.predict(input_data)
+
+    # Store the predictions and true values
+    test_predictions.append(group_predictions.flatten())
+    test_true_values.append(np.array(group['London_During']))
+
+# Flatten the predictions and true values lists
+test_predictions = np.concatenate(test_predictions)
+test_true_values = np.concatenate(test_true_values)
+
+# Plot the predictions against the true values
+plt.scatter(test_true_values, test_predictions, s=7)
+# PLot a line of perfect predicition
+plt.plot([min(test_true_values), max(test_true_values)], [min(test_true_values), max(test_true_values)], 'r--')
+plt.xlabel('True Values')
+plt.ylabel('Predictions')
+plt.title('True Allele Frequency vs. Predicted Allele Frequency for Ancient Variants Associated with the Black Death at the Onset of Selection')
+plt.show()
+
+# Calculate the correlation coefficient
+correlation_coefficient = np.corrcoef(test_true_values, test_predictions)[0, 1]
+
+# Calculate the R-squared value
+residuals = test_true_values - test_predictions
+ss_residuals = np.sum(residuals**2)
+ss_total = np.sum((test_true_values - np.mean(test_true_values))**2)
+r_squared = 1 - (ss_residuals / ss_total)
+
+# Calculate the Mean Squared Error
+mse = np.mean(residuals**2)
+
+print('Correlation Coefficient : ' , correlation_coefficient)
+print('R-Squared Value : ' , r_squared)
+print('Mean Squared Error : ', mse)
